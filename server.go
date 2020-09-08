@@ -33,6 +33,8 @@ var mapping map[string]string = map[string]string{
 var gCache = &cache.MemoryTTL{}
 
 func main() {
+	port := os.Getenv("PORT")
+
 	gCache = cache.NewMemoryWithTTL(12 * time.Hour)
 	r := mux.NewRouter()
 
@@ -49,7 +51,7 @@ func main() {
 
 	// yaay!! start the server!
 	log.Printf("Starting server at port 8080\n")
-	if err := http.ListenAndServe(":8080", r); err != nil {
+	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatal(err)
 	}
 }
