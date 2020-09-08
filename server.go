@@ -51,7 +51,7 @@ func main() {
 	c.AddFunc("@daily", updateCaches)
 
 	// yaay!! start the server!
-	log.Printf("Starting server at port 8080\n")
+	log.Printf("Starting server at port %s\n", port)
 	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatal(err)
 	}
