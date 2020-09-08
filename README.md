@@ -19,4 +19,7 @@ $ go get -u github.com/PuerkitoBio/goquery
 $ go run server.go 
 ```
 
+### Deployed on Heroku 
+
+https://sheltered-coast-59380.herokuapp.com/ 
 
