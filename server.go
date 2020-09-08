@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"sort"
 	"strings"
 	"time"
-	"os"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gorilla/mux"
@@ -58,8 +59,16 @@ func main() {
 }
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
+	keys := make([]string, 0, len(mapping))
+	for k := range mapping {
+		keys = append(keys, k)
+	}
+
+	sort.Strings(keys)
+
 	var helpText string = "Weekly Sunsign based Horoscope Forecasts by Anupam Kapil" + "<br/><br/>"
-	for k, v := range mapping {
+	for _, k := range keys {
+		v := mapping[k]
 		pv := strings.Replace(strings.Replace(v, "/", "", -1), "-", " ", -1)
 		helpText += "Click <a href='/forecast/" + k + "'>" + k + "</a> to get <b>" + pv + "</b>" + "<br/>"
 	}
