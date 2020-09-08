@@ -61,7 +61,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	var helpText string = "Weekly Sunsign based Horoscope Forecasts by Anupam Kapil" + "<br/><br/>"
 	for k, v := range mapping {
 		pv := strings.Replace(strings.Replace(v, "/", "", -1), "-", " ", -1)
-		helpText += "Use <a href='/forecast/" + k + "'>" + k + "</a> to get <b>" + pv + "</b>" + "<br/>"
+		helpText += "Click <a href='/forecast/" + k + "'>" + k + "</a> to get <b>" + pv + "</b>" + "<br/>"
 	}
 
 	fmt.Fprintf(w, "<html><head><title>Weekly Sunsign based Horoscope Forecasts by Anupam Kapil</title></head><body>"+helpText+"</body></html>")
