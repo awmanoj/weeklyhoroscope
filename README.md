@@ -1,4 +1,4 @@
-# weeklyhoroscope
+# weekly horoscope
 ## Weekly sunsign based Horoscope Forecasts by Anupam Kapil
 
 ### HOW TO
