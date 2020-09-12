@@ -32,6 +32,27 @@ var mapping map[string]string = map[string]string{
 	"aries":       "aries-weekly-horoscope/",
 }
 
+var indexHTMLTemplate = `<html>
+	<head>
+		<title>Weekly Sunsign based Horoscope Forecasts by Anupam Kapil</title>
+	</head>
+	<body>
+		%%helpText%%
+	</body>
+	</html>`
+
+var forecastHTMLTemplate = `<html>
+	<head>
+		<title>Weekly Sunsign based Horoscope Forecasts by Anupam Kapil</title>
+	</head>
+	<body>
+		<h1>%%title%%</h1>
+		<p>%%forecast%%</p>
+		<br/><br/>
+		<a href='%%url%%'>%%url%%</a>
+	</body>
+	</html>`
+
 var gCache = &cache.MemoryTTL{}
 
 func main() {
@@ -73,7 +94,9 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		helpText += "Click <a href='/forecast/" + k + "'>" + k + "</a> to get <b>" + pv + "</b>" + "<br/>"
 	}
 
-	fmt.Fprintf(w, "<html><head><title>Weekly Sunsign based Horoscope Forecasts by Anupam Kapil</title></head><body>"+helpText+"</body></html>")
+	indexHTML := strings.Replace(indexHTMLTemplate, "%%helpText%%", helpText, 1)
+
+	fmt.Fprintf(w, indexHTML)
 	return
 }
 
@@ -95,7 +118,11 @@ func handleForecast(w http.ResponseWriter, r *http.Request) {
 
 	var url = baseURL + mapping[sunsign]
 
-	fmt.Fprintf(w, "<html><head><title>Weekly Sunsign based Horoscope Forecasts by Anupam Kapil</title></head><body><h1>"+title+"</h1><p>"+forecast+"</p> <br/><br/><a href='"+url+"'>"+url+"</a></body></html>")
+	forecastHTML := strings.Replace(forecastHTMLTemplate, "%%title%%", title, 1)
+	forecastHTML = strings.Replace(forecastHTML, "%%forecast%%", forecast, 1)
+	forecastHTML = strings.Replace(forecastHTML, "%%url%%", url, 2)
+
+	fmt.Fprintf(w, forecastHTML)
 }
 
 func fetchForecast(sunsign string) (string, string, error) {
