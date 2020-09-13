@@ -151,7 +151,6 @@ func handleForecast(w http.ResponseWriter, r *http.Request) {
 func fetchForecast(sunsign string) (string, string, error) {
 	var title, forecast string
 
-	// the keys for cache
 	titleKey := sunsign + ":title"
 	forecastKey := sunsign + ":forecast"
 
@@ -160,43 +159,69 @@ func fetchForecast(sunsign string) (string, string, error) {
 	forecastIntf, err2 := gCache.Get(forecastKey)
 
 	// the url for fetching the data
-	var url = baseURL + mapping[sunsign]
 	if err1 != nil || err2 != nil {
 		_, ok := mapping[sunsign]
 		if ok {
-			// TODO: using http client with timeout instead.
-			// this may timeout in 20 minutes or so and lead to too many open files
-			// crashing the server.
-			resp, err := http.Get(url)
+			err := forceUpdate(sunsign)
 			if err != nil {
-				return title, forecast, errors.New("error connecting with " + url)
+				return title, forecast, errors.New("err" + err.Error())
 			}
-
-			defer resp.Body.Close()
-
-			// parse the HTML
-			doc, err := goquery.NewDocumentFromReader(resp.Body)
-			if err != nil {
-				return title, forecast, errors.New("error parsing the html")
-			}
-
-			title, _ = doc.Find("h4").First().Html()
-			forecast, _ = doc.Find("blockquote p").First().Html()
-
-			title = strings.Replace(title, "<nil>", "", -1)
-
-			// update the cache
-			_ = gCache.Set(titleKey, title)
-			_ = gCache.Set(forecastKey, forecast)
 		} else {
 			return title, forecast, errors.New("Invalid sunsign. Accepted values: aquarius, libra, sagittarius, capricorn, scorpio, pisces, virgo, leo, cancer, gemini, taurus, aries")
 		}
 	} else {
 		title = titleIntf.(string)
 		forecast = forecastIntf.(string)
+
+		// still go and update the cache
+		go forceUpdate(sunsign)
 	}
 
 	return title, forecast, nil
+}
+
+func forceUpdate(sunsign string) error {
+	var url = baseURL + mapping[sunsign]
+
+	// the keys for cache
+	titleKey := sunsign + ":title"
+	forecastKey := sunsign + ":forecast"
+
+	// TODO: using http client with timeout instead.
+	// this may timeout in 20 minutes or so and lead to too many open files
+	// crashing the server.
+	resp, err := http.Get(url)
+	if err != nil {
+		return errors.New("error connecting with " + url)
+	}
+
+	defer resp.Body.Close()
+
+	// parse the HTML
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return errors.New("error parsing the html")
+	}
+
+	title, err1 := doc.Find("h4").First().Html()
+	forecast, err2 := doc.Find("blockquote p").First().Html()
+
+	title = strings.Replace(title, "<nil>", "", -1)
+
+	// update the cache
+	if err1 != nil {
+		log.Println("err", "problem fetching title from ", url)
+	} else {
+		_ = gCache.Set(titleKey, title)
+	}
+
+	if err2 != nil {
+		log.Println("err", "problem fetching forecast from ", url)
+	} else {
+		_ = gCache.Set(forecastKey, forecast)
+	}
+
+	return nil
 }
 
 func updateCaches() {
