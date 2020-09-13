@@ -32,12 +32,25 @@ var mapping map[string]string = map[string]string{
 	"aries":       "aries-weekly-horoscope/",
 }
 
+var cssStyle = `
+
+`
+
 var indexHTMLTemplate = `<html>
 	<head>
 		<title>Weekly Sunsign based Horoscope Forecasts by Anupam Kapil</title>
+		<style>
+			%%cssStyle%%
+		</style>
 	</head>
 	<body>
 		%%helpText%%
+	<br/><br/>
+	<center>
+		<hr/>
+		Manoj Awasthi | <a href="https://awmanoj.github.io">https://awmanoj.github.io</a> | 2020  
+	</center>
+
 	</body>
 	</html>`
 
@@ -49,7 +62,15 @@ var forecastHTMLTemplate = `<html>
 		<h1>%%title%%</h1>
 		<p>%%forecast%%</p>
 		<br/><br/>
-		<a href='%%url%%'>%%url%%</a>
+		<p style='display: inline'>Source: </p><a style='display: inline' href='%%url%%'>%%url%%</a>
+		<br/><br/>
+		<p style='display: inline'>Back to </p><a href='/'>Home</a>
+		<br/><br/>
+		<center>
+		<hr/>
+		Manoj Awasthi | <a href="https://awmanoj.github.io">https://awmanoj.github.io</a> | 2020  
+	</center>
+
 	</body>
 	</html>`
 
@@ -87,7 +108,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 	sort.Strings(keys)
 
-	var helpText string = "Weekly Sunsign based Horoscope Forecasts by Anupam Kapil" + "<br/><br/>"
+	var helpText string = "Weekly Sunsign based Horoscope Forecasts by <a href='http://anupamkapil.com/'>Anupam Kapil</a>" + "<br/><br/>"
 	for _, k := range keys {
 		v := mapping[k]
 		pv := strings.Replace(strings.Replace(v, "/", "", -1), "-", " ", -1)
@@ -95,6 +116,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	indexHTML := strings.Replace(indexHTMLTemplate, "%%helpText%%", helpText, 1)
+	indexHTML = strings.Replace(indexHTML, "%%cssStyle%%", cssStyle, -1)
 
 	fmt.Fprintf(w, indexHTML)
 	return
@@ -121,6 +143,7 @@ func handleForecast(w http.ResponseWriter, r *http.Request) {
 	forecastHTML := strings.Replace(forecastHTMLTemplate, "%%title%%", title, 1)
 	forecastHTML = strings.Replace(forecastHTML, "%%forecast%%", forecast, 1)
 	forecastHTML = strings.Replace(forecastHTML, "%%url%%", url, 2)
+	forecastHTML = strings.Replace(forecastHTML, "%%cssStyle%%", cssStyle, -1)
 
 	fmt.Fprintf(w, forecastHTML)
 }
