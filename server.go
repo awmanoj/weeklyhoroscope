@@ -33,7 +33,27 @@ var mapping map[string]string = map[string]string{
 }
 
 var cssStyle = `
+	body {
+		width: 60%;
+	}
 
+	h1 {
+		font-family: "Geneva";
+		background-color: #C0C4E4;
+	}
+
+
+	p {
+		font-family: "Geneva";
+	}	
+
+	a {
+		font-family: "Geneva"
+	}
+
+	#footer {
+		background-color: #DFE1F1;
+	}
 `
 
 var indexHTMLTemplate = `<html>
@@ -47,8 +67,9 @@ var indexHTMLTemplate = `<html>
 		%%helpText%%
 	<br/><br/>
 	<center>
-		<hr/>
-		Manoj Awasthi | <a href="https://awmanoj.github.io">https://awmanoj.github.io</a> | 2020  
+		<div id="footer">
+		<p style='display: inline'>Manoj Awasthi | </p><a href="https://awmanoj.github.io">https://awmanoj.github.io</a> | <p style='display: inline'>2020  </p>
+		</div>
 	</center>
 
 	</body>
@@ -57,6 +78,9 @@ var indexHTMLTemplate = `<html>
 var forecastHTMLTemplate = `<html>
 	<head>
 		<title>Weekly Sunsign based Horoscope Forecasts by Anupam Kapil</title>
+		<style>
+			%%cssStyle%%
+		</style>
 	</head>
 	<body>
 		<h1>%%title%%</h1>
@@ -67,8 +91,9 @@ var forecastHTMLTemplate = `<html>
 		<p style='display: inline'>Back to </p><a href='/'>Home</a>
 		<br/><br/>
 		<center>
-		<hr/>
-		Manoj Awasthi | <a href="https://awmanoj.github.io">https://awmanoj.github.io</a> | 2020  
+		<div id="footer">
+		<p style='display: inline'>Manoj Awasthi | </p><a href="https://awmanoj.github.io">https://awmanoj.github.io</a> | <p style='display: inline'>2020  </p>
+		</div>
 	</center>
 
 	</body>
@@ -108,7 +133,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 	sort.Strings(keys)
 
-	var helpText string = "Weekly Sunsign based Horoscope Forecasts by <a href='http://anupamkapil.com/'>Anupam Kapil</a>" + "<br/><br/>"
+	var helpText string = "<h1>Weekly Sunsign based Horoscope Forecasts by <a href='http://anupamkapil.com/'>Anupam Kapil</a></h1>" + "<br/><br/>"
 	for _, k := range keys {
 		v := mapping[k]
 		pv := strings.Replace(strings.Replace(v, "/", "", -1), "-", " ", -1)
