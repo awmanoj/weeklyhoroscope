@@ -16,10 +16,15 @@ import (
 	"github.com/robfig/cron"
 )
 
+type zodiac struct {
+	title string
+	daterange string
+}
+
 var baseURL = "https://www.4to40.com/astrology/"
 var mapping map[string]string = map[string]string{
-	"aquarius":    "aquarius-weekly-horoscope/",
-	"libra":       "libra-weekly-horoscope/",
+	"aquarius": "aquarius-weekly-horoscope/",
+	"libra": "libra-weekly-horoscope/",
 	"sagittarius": "sagittarius-weekly-horoscope/",
 	"capricorn":   "capricorn-weekly-horoscope/",
 	"scorpio":     "scorpio-weekly-horoscope/",
@@ -30,6 +35,21 @@ var mapping map[string]string = map[string]string{
 	"gemini":      "gemini-weekly-horoscope/",
 	"taurus":      "taurus-weekly-horoscope/",
 	"aries":       "aries-weekly-horoscope/",
+}
+
+var mapping2 map[string]string = map[string]string{
+	"aquarius":    "January 20 – February 18",
+	"libra":       "September 21 – October 22",
+	"sagittarius": "November 22 – December 22",
+	"capricorn":   "December 23 – January 19",
+	"scorpio":     "October 23 – November 21",
+	"pisces":      "February 19 – March 19",
+	"virgo":       "August 22 – September 20",
+	"leo":         "July 22 – August 21",
+	"cancer":      "June 21 – July 21",
+	"gemini":      "May 20 – June 20",
+	"taurus":      "April 19 – May 19",
+	"aries":       "March 20 – April 18",
 }
 
 var cssStyle = `
@@ -136,8 +156,9 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	var helpText string = "<h1>Weekly Sunsign based Horoscope Forecasts by <a href='http://anupamkapil.com/'>Anupam Kapil</a></h1>" + "<br/><br/>"
 	for _, k := range keys {
 		v := mapping[k]
+		v2 := mapping2[k]
 		pv := strings.Replace(strings.Replace(v, "/", "", -1), "-", " ", -1)
-		helpText += "Click <a href='/forecast/" + k + "'>" + k + "</a> to get <b>" + pv + "</b>" + "<br/>"
+		helpText += "Click <a href='/forecast/" + k + "'>" + k + "</a> ("+ v2 + ") to get <b>" + pv + "</b>" + "<br/>"
 	}
 
 	indexHTML := strings.Replace(indexHTMLTemplate, "%%helpText%%", helpText, 1)
