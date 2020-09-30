@@ -16,10 +16,6 @@ import (
 	"github.com/robfig/cron"
 )
 
-type zodiac struct {
-	title string
-	daterange string
-}
 
 var baseURL = "https://www.4to40.com/astrology/"
 var mapping map[string]string = map[string]string{
